@@ -1,10 +1,12 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import Store from './store';
+// import Store from './store';
+// import { createStore } from './redux';
+import { createStore } from 'redux';
 
 const initialState = { count: 0 };
 
-function updateState(state, action) {
+function reducer(state = { count: 0 }, action) {
 	switch (action.type) {
 		case 'INCREMENT':
 			return { count: state.count + action.amount };
@@ -19,9 +21,9 @@ function updateState(state, action) {
 
 const incrementAction = { type: 'INCREMENT', amount: 1 };
 const decrementAction = { type: 'DECREMENT', amount: 1 };
-const resetAction = { type: 'RESET'};
+const resetAction = { type: 'RESET' };
 
-const store = new Store(updateState, initialState);
+const store = createStore(reducer, initialState);
 
 class Counter extends React.Component {
 	constructor(props) {
@@ -30,28 +32,28 @@ class Counter extends React.Component {
 		this.increment = this.increment.bind(this);
 		this.decrement = this.decrement.bind(this);
 		this.reset = this.reset.bind(this);
-    }
-    
-    componentDidMount() {
-        store.subscribe(() => this.forceUpdate());
-    }
+	}
+
+	componentDidMount() {
+		store.subscribe(() => this.forceUpdate());
+	}
 
 	increment() {
-        store.update(incrementAction);
-    }
+		store.dispatch(incrementAction);
+	}
 
 	decrement() {
-        store.update(decrementAction);
-    }
+		store.dispatch(decrementAction);
+	}
 
-    reset() {
-        store.update(resetAction);
-    }
+	reset() {
+		store.dispatch(resetAction);
+	}
 
 	render() {
 		return (
 			<div className="counter">
-				<span className="count">{store.state.count}</span>
+				<span className="count">{store.getState().count}</span>
 
 				<div className="buttons">
 					<button className="decrement" onClick={this.decrement}>
